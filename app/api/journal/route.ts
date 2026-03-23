@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     .select('*, journal_entry_goals(goal_id, goals(id, title))')
     .order('created_at', { ascending: false })
 
-  if (entryType) query = query.eq('entry_type', entryType)
+  if (entryType) query = query.eq('entry_type', entryType as 'journal' | 'prompt' | 'whatif')
   if (chapterId) query = query.eq('chapter_id', chapterId)
 
   const { data, error } = await query

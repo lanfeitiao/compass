@@ -13,8 +13,21 @@ export interface Database {
           ended_at: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['chapters']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['chapters']['Insert']>
+        Insert: {
+          user_id: string
+          name: string
+          emoji?: string | null
+          started_at: string
+          ended_at?: string | null
+        }
+        Update: {
+          user_id?: string
+          name?: string
+          emoji?: string | null
+          started_at?: string
+          ended_at?: string | null
+        }
+        Relationships: []
       }
       goals: {
         Row: {
@@ -27,8 +40,23 @@ export interface Database {
           status: 'active' | 'completed' | 'archived'
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['goals']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['goals']['Insert']>
+        Insert: {
+          user_id: string
+          chapter_id?: string | null
+          parent_goal_id?: string | null
+          title: string
+          description?: string | null
+          status: 'active' | 'completed' | 'archived'
+        }
+        Update: {
+          user_id?: string
+          chapter_id?: string | null
+          parent_goal_id?: string | null
+          title?: string
+          description?: string | null
+          status?: 'active' | 'completed' | 'archived'
+        }
+        Relationships: []
       }
       tasks: {
         Row: {
@@ -40,8 +68,21 @@ export interface Database {
           due_date: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['tasks']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['tasks']['Insert']>
+        Insert: {
+          user_id: string
+          goal_id?: string | null
+          title: string
+          status: 'todo' | 'in_progress' | 'done'
+          due_date?: string | null
+        }
+        Update: {
+          user_id?: string
+          goal_id?: string | null
+          title?: string
+          status?: 'todo' | 'in_progress' | 'done'
+          due_date?: string | null
+        }
+        Relationships: []
       }
       journal_entries: {
         Row: {
@@ -54,14 +95,36 @@ export interface Database {
           prompt: string | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['journal_entries']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['journal_entries']['Insert']>
+        Insert: {
+          user_id: string
+          chapter_id?: string | null
+          title?: string | null
+          content: string
+          entry_type: 'journal' | 'prompt' | 'whatif'
+          prompt?: string | null
+        }
+        Update: {
+          user_id?: string
+          chapter_id?: string | null
+          title?: string | null
+          content?: string
+          entry_type?: 'journal' | 'prompt' | 'whatif'
+          prompt?: string | null
+        }
+        Relationships: []
       }
       journal_entry_goals: {
         Row: { journal_entry_id: string; goal_id: string }
-        Insert: Database['public']['Tables']['journal_entry_goals']['Row']
+        Insert: { journal_entry_id: string; goal_id: string }
         Update: never
+        Relationships: []
       }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
     }
   }
 }

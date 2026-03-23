@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import type { Database } from '@/lib/supabase/types'
 
 export async function PUT(
   request: Request,
@@ -7,7 +8,7 @@ export async function PUT(
 ) {
   const supabase = await createClient()
   const { id } = await params
-  const body = await request.json()
+  const body = (await request.json()) as Database['public']['Tables']['tasks']['Update']
   const { data, error } = await supabase
     .from('tasks')
     .update(body)
