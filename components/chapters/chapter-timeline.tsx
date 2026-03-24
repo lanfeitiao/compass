@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import type { Chapter } from '@/lib/supabase/types'
-import { Badge } from '@/components/ui/badge'
 
 export type ChapterWithCounts = Chapter & {
   goalCount: number
@@ -18,8 +17,8 @@ function formatDate(dateStr: string) {
 export function ChapterTimeline({ chapters }: { chapters: ChapterWithCounts[] }) {
   return (
     <div className="relative pl-8">
-      {/* Gradient timeline line */}
-      <div className="absolute top-0 bottom-0 left-3 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-muted" />
+      {/* Timeline line */}
+      <div className="absolute top-0 bottom-0 left-3 w-[3px] bg-brown" />
 
       <div className="space-y-6">
         {chapters.map((chapter) => {
@@ -27,56 +26,55 @@ export function ChapterTimeline({ chapters }: { chapters: ChapterWithCounts[] })
 
           return (
             <div key={chapter.id} className="relative">
-              {/* Timeline dot */}
+              {/* Timeline dot — square */}
               <div
-                className={`absolute -left-5 top-1.5 h-3 w-3 rounded-full border-2 border-background ${
-                  isCurrent ? 'bg-primary' : 'bg-muted-foreground'
+                className={`absolute -left-5 top-1.5 ${
+                  isCurrent ? 'h-[18px] w-[18px] bg-gold' : 'h-[14px] w-[14px] bg-brown'
                 }`}
+                style={{ marginTop: isCurrent ? '-2px' : '0' }}
               />
 
-              <div
-                className={`rounded-lg border p-4 ${
-                  isCurrent
-                    ? 'border-primary/30 bg-primary/5'
-                    : 'border-border bg-background'
-                }`}
-              >
+              <div className="border-2 border-brown p-4">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-semibold">
+                  <h3 className="text-base font-extrabold uppercase tracking-[0.5px]">
                     {chapter.emoji ? `${chapter.emoji} ` : ''}
                     {chapter.name}
                   </h3>
                   {isCurrent && (
-                    <Badge variant="default" className="text-[10px]">
+                    <span className="inline-flex items-center bg-gold px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-brown">
                       Current
-                    </Badge>
+                    </span>
                   )}
                 </div>
 
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {formatDate(chapter.started_at)}
                   {' \u2014 '}
                   {chapter.ended_at ? formatDate(chapter.ended_at) : 'present'}
                 </p>
 
-                <div className="mt-3 flex gap-3 text-xs text-muted-foreground">
+                {/* Stat blocks */}
+                <div className="flex mt-3">
                   <Link
                     href={`/goals?chapter=${chapter.id}`}
-                    className="hover:text-foreground transition-colors"
+                    className="flex-1 bg-navy py-2 text-center transition-colors hover:bg-navy/80"
                   >
-                    {chapter.goalCount} {chapter.goalCount === 1 ? 'goal' : 'goals'}
+                    <div className="text-base font-black text-cream">{chapter.goalCount}</div>
+                    <div className="text-[7px] font-extrabold uppercase tracking-[1.5px] text-cream">Goals</div>
                   </Link>
                   <Link
                     href={`/journal?chapter=${chapter.id}`}
-                    className="hover:text-foreground transition-colors"
+                    className="flex-1 bg-olive py-2 text-center transition-colors hover:bg-olive/80"
                   >
-                    {chapter.entryCount} {chapter.entryCount === 1 ? 'entry' : 'entries'}
+                    <div className="text-base font-black text-cream">{chapter.entryCount}</div>
+                    <div className="text-[7px] font-extrabold uppercase tracking-[1.5px] text-cream">Entries</div>
                   </Link>
                   <Link
                     href={`/journal?chapter=${chapter.id}&type=whatif`}
-                    className="hover:text-foreground transition-colors"
+                    className="flex-1 bg-terracotta py-2 text-center transition-colors hover:bg-terracotta/80"
                   >
-                    {chapter.whatifCount} {chapter.whatifCount === 1 ? 'what-if' : 'what-ifs'}
+                    <div className="text-base font-black text-cream">{chapter.whatifCount}</div>
+                    <div className="text-[7px] font-extrabold uppercase tracking-[1.5px] text-cream">What-Ifs</div>
                   </Link>
                 </div>
               </div>
@@ -86,9 +84,9 @@ export function ChapterTimeline({ chapters }: { chapters: ChapterWithCounts[] })
 
         {/* Next chapter placeholder */}
         <div className="relative">
-          <div className="absolute -left-5 top-1.5 h-3 w-3 rounded-full border-2 border-dashed border-muted-foreground/50" />
-          <div className="rounded-lg border border-dashed p-4 text-center">
-            <p className="text-sm italic text-muted-foreground">
+          <div className="absolute -left-5 top-1.5 h-[14px] w-[14px] border-2 border-brown" />
+          <div className="border-2 border-brown p-4 text-center">
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               What comes next? Name your next chapter when you&apos;re ready...
             </p>
           </div>
