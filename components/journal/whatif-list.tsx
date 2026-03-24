@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import type { JournalEntry } from '@/lib/supabase/types'
 
 export function WhatIfList({ entries }: { entries: JournalEntry[] }) {
@@ -35,11 +34,11 @@ export function WhatIfList({ entries }: { entries: JournalEntry[] }) {
       </form>
 
       {entries.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
           No What If entries yet. Type a question above to get started.
         </p>
       ) : (
-        <div className="space-y-3">
+        <div>
           {entries.map((entry) => {
             const date = new Date(entry.created_at).toLocaleDateString(
               'en-US',
@@ -50,17 +49,18 @@ export function WhatIfList({ entries }: { entries: JournalEntry[] }) {
               <button
                 key={entry.id}
                 type="button"
-                className="w-full text-left"
+                className="w-full text-left border-b border-border py-3 transition-colors hover:bg-[#f0ebe0]"
                 onClick={() => router.push(`/journal/${entry.id}`)}
               >
-                <Card className="transition-colors hover:bg-muted/50">
-                  <CardContent className="space-y-1">
-                    <p className="text-sm font-medium">
-                      {entry.prompt ?? 'Untitled'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{date}</p>
-                  </CardContent>
-                </Card>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center bg-terracotta px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-cream">
+                    What If
+                  </span>
+                  <p className="text-sm font-semibold">
+                    {entry.prompt ?? 'Untitled'}
+                  </p>
+                </div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5 ml-[calc(2px+theme(spacing.2)*2+theme(spacing.2))]">{date}</p>
               </button>
             )
           })}

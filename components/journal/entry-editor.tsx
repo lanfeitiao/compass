@@ -7,7 +7,6 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import type { Goal } from '@/lib/supabase/types'
 
 interface EntryEditorProps {
@@ -45,7 +44,7 @@ export function EntryEditor({
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm dark:prose-invert min-h-[200px] max-w-none rounded-lg border bg-background px-4 py-3 focus:outline-none',
+          'prose prose-sm min-h-[200px] max-w-none border-2 border-brown bg-background px-4 py-3 focus:outline-none',
       },
     },
   })
@@ -95,14 +94,14 @@ export function EntryEditor({
     <div className="space-y-4">
       {prompt && (
         <div
-          className={`rounded-xl p-4 ${
+          className={`p-4 ${
             entryType === 'whatif'
-              ? 'bg-orange-50 text-orange-900 dark:bg-orange-950 dark:text-orange-100'
-              : 'bg-violet-50 text-violet-900 dark:bg-violet-950 dark:text-violet-100'
+              ? 'bg-terracotta text-cream'
+              : 'bg-gold text-brown'
           }`}
         >
-          <p className="text-sm font-medium opacity-75">
-            {entryType === 'whatif' ? 'What if...' : 'Prompt'}
+          <p className="text-[9px] font-extrabold uppercase tracking-[2px]">
+            {entryType === 'whatif' ? 'What If' : 'Prompt'}
           </p>
           <p className="mt-1 font-semibold">{prompt}</p>
         </div>
@@ -119,15 +118,20 @@ export function EntryEditor({
 
       {goals.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Link to goals</p>
+          <p className="text-sm font-bold text-muted-foreground">Link to goals</p>
           <div className="flex flex-wrap gap-2">
             {goals.map((goal) => (
-              <button key={goal.id} type="button" onClick={() => toggleGoal(goal.id)}>
-                <Badge
-                  variant={selectedGoalIds.includes(goal.id) ? 'default' : 'outline'}
-                >
-                  {goal.title}
-                </Badge>
+              <button
+                key={goal.id}
+                type="button"
+                onClick={() => toggleGoal(goal.id)}
+                className={`inline-flex items-center px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider transition-colors ${
+                  selectedGoalIds.includes(goal.id)
+                    ? 'bg-navy text-cream'
+                    : 'border-2 border-navy text-navy'
+                }`}
+              >
+                {goal.title}
               </button>
             ))}
           </div>

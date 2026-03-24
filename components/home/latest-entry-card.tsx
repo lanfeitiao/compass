@@ -1,6 +1,4 @@
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import type { JournalEntry, Goal } from '@/lib/supabase/types'
 
 type EntryWithGoals = JournalEntry & { goals: Pick<Goal, 'id' | 'title'>[] }
@@ -8,16 +6,14 @@ type EntryWithGoals = JournalEntry & { goals: Pick<Goal, 'id' | 'title'>[] }
 export function LatestEntryCard({ entry }: { entry: EntryWithGoals | null }) {
   if (!entry) {
     return (
-      <Card>
-        <CardContent className="py-6">
-          <p className="text-sm text-muted-foreground">
-            No journal entries yet.{' '}
-            <Link href="/journal/new" className="text-primary underline">
-              Write your first entry &rarr;
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
+      <div className="border-2 border-brown p-6">
+        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          No journal entries yet.{' '}
+          <Link href="/journal/new" className="text-navy underline">
+            Write your first entry
+          </Link>
+        </p>
+      </div>
     )
   }
 
@@ -28,23 +24,29 @@ export function LatestEntryCard({ entry }: { entry: EntryWithGoals | null }) {
   })
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Latest journal entry</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <p className="font-medium">{entry.title ?? 'Untitled'}</p>
-        <p className="text-xs text-muted-foreground">{date}</p>
+    <div>
+      <div className="text-[9px] font-extrabold uppercase tracking-[2px] text-foreground mb-3">
+        Latest Entry
+      </div>
+      <Link
+        href={`/journal/${entry.id}`}
+        className="block border-b border-border py-2.5 transition-colors hover:bg-[#f0ebe0]"
+      >
+        <p className="text-sm font-bold uppercase tracking-[0.5px]">{entry.title ?? 'Untitled'}</p>
+        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5">{date}</p>
         {entry.goals.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
             {entry.goals.map((goal) => (
-              <Badge key={goal.id} variant="secondary">
+              <span
+                key={goal.id}
+                className="inline-flex items-center bg-navy px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-cream"
+              >
                 {goal.title}
-              </Badge>
+              </span>
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </Link>
+    </div>
   )
 }

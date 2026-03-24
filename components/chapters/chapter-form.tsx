@@ -60,7 +60,7 @@ export function ChapterForm() {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="chapter-name" className="text-sm font-medium">
+            <label htmlFor="chapter-name" className="text-sm font-bold">
               Name
             </label>
             <Input
@@ -73,7 +73,7 @@ export function ChapterForm() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="chapter-emoji" className="text-sm font-medium">
+            <label htmlFor="chapter-emoji" className="text-sm font-bold">
               Emoji (optional)
             </label>
             <Input
@@ -85,7 +85,7 @@ export function ChapterForm() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="chapter-start" className="text-sm font-medium">
+            <label htmlFor="chapter-start" className="text-sm font-bold">
               Start Date
             </label>
             <Input

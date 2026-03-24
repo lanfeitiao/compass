@@ -2,29 +2,29 @@
 
 import { useRouter } from 'next/navigation'
 import { PROMPTS } from '@/lib/prompts'
-import { Card, CardContent } from '@/components/ui/card'
 
 export function PromptsList() {
   const router = useRouter()
 
   return (
-    <div className="space-y-3">
+    <div>
       {PROMPTS.map((prompt) => (
         <button
           key={prompt}
           type="button"
-          className="w-full text-left"
+          className="w-full text-left border-b border-border py-3 transition-colors hover:bg-[#f0ebe0]"
           onClick={() =>
             router.push(
               `/journal/new?prompt=${encodeURIComponent(prompt)}&type=prompt`
             )
           }
         >
-          <Card className="transition-colors hover:bg-muted/50">
-            <CardContent>
-              <p className="text-sm font-medium">{prompt}</p>
-            </CardContent>
-          </Card>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center bg-gold px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-brown">
+              Prompt
+            </span>
+            <p className="text-sm font-semibold">{prompt}</p>
+          </div>
         </button>
       ))}
     </div>

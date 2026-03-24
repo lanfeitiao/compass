@@ -4,8 +4,8 @@
   "description": "Your life purpose & goal tracker",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#6366f1",
+  "background_color": "#faf6f0",
+  "theme_color": "#2c2420",
   "orientation": "portrait",
   "icons": [
     {

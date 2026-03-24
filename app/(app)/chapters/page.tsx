@@ -46,13 +46,13 @@ export default async function ChaptersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Life Chapters</h1>
+        <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">Life Chapters</h1>
         <ChapterForm />
       </div>
 
       {chaptersWithCounts.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground">
+        <div className="border-2 border-brown p-8 text-center">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
             No chapters yet. Create your first chapter to begin mapping your life story.
           </p>
         </div>

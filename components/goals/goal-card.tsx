@@ -2,9 +2,6 @@
 
 import { useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import { TaskItem } from './task-item'
 import { calculateGoalProgress } from '@/lib/goal-utils'
 import type { Goal, Task } from '@/lib/supabase/types'
@@ -17,15 +14,15 @@ export type GoalWithData = Goal & {
 }
 
 const statusBorderColor: Record<string, string> = {
-  active: 'border-l-primary',
-  completed: 'border-l-green-500',
-  archived: 'border-l-muted',
+  active: 'border-l-terracotta',
+  completed: 'border-l-olive',
+  archived: 'border-l-muted-foreground',
 }
 
-const statusBadgeVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
-  active: 'default',
-  completed: 'secondary',
-  archived: 'outline',
+const statusBadgeBg: Record<string, string> = {
+  active: 'bg-terracotta text-cream',
+  completed: 'bg-olive text-cream',
+  archived: 'bg-muted-foreground text-cream',
 }
 
 export function GoalCard({
@@ -43,7 +40,6 @@ export function GoalCard({
   const [tasks, setTasks] = useState<Task[]>(goal.tasks)
 
   const progress = calculateGoalProgress(tasks)
-  const progressPercent = progress.total > 0 ? (progress.done / progress.total) * 100 : 0
 
   function handleTaskUpdate(updatedTask: Task) {
     setTasks((prev) =>
@@ -53,80 +49,89 @@ export function GoalCard({
 
   return (
     <div style={{ marginLeft: depth * 16 }}>
-      <Card
+      <div
         className={cn(
-          'border-l-4',
-          statusBorderColor[goal.status] ?? 'border-l-muted'
+          'border-l-4 border-2 border-brown bg-[#f5f0e8] p-4',
+          statusBorderColor[goal.status] ?? 'border-l-muted-foreground'
         )}
       >
-        <CardContent className="p-4">
-          <div className="flex items-start gap-2">
-            {hasChildren && (
-              <button
-                onClick={() => setExpanded(!expanded)}
-                className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label={expanded ? 'Collapse' : 'Expand'}
-              >
-                {expanded ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </button>
-            )}
-            {!hasChildren && <div className="w-4 shrink-0" />}
+        <div className="flex items-start gap-2">
+          {hasChildren && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label={expanded ? `Collapse ${goal.title}` : `Expand ${goal.title}`}
+            >
+              {expanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </button>
+          )}
+          {!hasChildren && <div className="w-4 shrink-0" />}
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-sm font-medium">{goal.title}</h3>
-                <Badge variant={statusBadgeVariant[goal.status] ?? 'outline'}>
-                  {goal.status}
-                </Badge>
-                {goal.journal_entry_goals.length > 0 && (
-                  <span className="text-xs text-muted-foreground">
-                    {goal.journal_entry_goals.length} journal{' '}
-                    {goal.journal_entry_goals.length === 1 ? 'entry' : 'entries'}
-                  </span>
-                )}
-              </div>
-
-              {progress.total > 0 && (
-                <div className="mt-2">
-                  <Progress value={progressPercent}>
-                    <span className="text-xs text-muted-foreground">
-                      {progress.done}/{progress.total} tasks
-                    </span>
-                  </Progress>
-                </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-sm font-bold uppercase tracking-[0.5px]">{goal.title}</h3>
+              <span className={`inline-flex items-center px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider ${statusBadgeBg[goal.status] ?? 'bg-muted-foreground text-cream'}`}>
+                {goal.status}
+              </span>
+              {goal.journal_entry_goals.length > 0 && (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {goal.journal_entry_goals.length} {goal.journal_entry_goals.length === 1 ? 'entry' : 'entries'}
+                </span>
               )}
             </div>
-          </div>
 
-          {expanded && (
-            <div className="mt-3 pl-6 space-y-3">
-              {tasks.length > 0 && (
-                <ul className="space-y-2">
-                  {tasks.map((task) => (
-                    <TaskItem
-                      key={task.id}
-                      task={task}
-                      onUpdate={handleTaskUpdate}
+            {/* Pictogram progress dots */}
+            {progress.total > 0 && (
+              <div className="mt-2 flex items-center gap-1.5">
+                <div className="flex gap-0.5">
+                  {tasks.map((t) => (
+                    <div
+                      key={t.id}
+                      className={cn(
+                        'h-2.5 w-2.5',
+                        t.status === 'done'
+                          ? 'bg-olive'
+                          : 'border-[1.5px] border-brown'
+                      )}
                     />
                   ))}
-                </ul>
-              )}
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {progress.done}/{progress.total} Tasks
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
 
-              {goal.subGoals?.map((subGoal) => (
-                <GoalCard
-                  key={subGoal.id}
-                  goal={subGoal}
-                  depth={depth + 1}
-                />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        {expanded && (
+          <div className="mt-3 pl-6 space-y-3">
+            {tasks.length > 0 && (
+              <ul className="space-y-2">
+                {tasks.map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    onUpdate={handleTaskUpdate}
+                  />
+                ))}
+              </ul>
+            )}
+
+            {goal.subGoals?.map((subGoal) => (
+              <GoalCard
+                key={subGoal.id}
+                goal={subGoal}
+                depth={depth + 1}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

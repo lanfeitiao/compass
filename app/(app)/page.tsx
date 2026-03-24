@@ -74,28 +74,55 @@ export default async function HomePage() {
 
   const currentChapter = (chapters as { name: string; emoji: string | null }[] | null)?.[0] ?? null
 
+  // Stat block counts
+  const { count: goalCount } = await supabase
+    .from('goals')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'active')
+
+  const { count: entryCount } = await supabase
+    .from('journal_entries')
+    .select('id', { count: 'exact', head: true })
+
   const greeting = getGreeting()
+  const taskCount = tasks?.length ?? 0
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">
           {greeting}
           {firstName ? `, ${firstName}` : ''}
         </h1>
         {currentChapter && (
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             {currentChapter.emoji ? `${currentChapter.emoji} ` : ''}
             {currentChapter.name}
           </p>
         )}
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-[11px] font-bold uppercase tracking-[2px] text-muted-foreground">
           {new Date().toLocaleDateString('en-US', {
             weekday: 'long',
             month: 'long',
             day: 'numeric',
           })}
         </p>
+      </div>
+
+      {/* Stat blocks */}
+      <div className="flex">
+        <div className="flex-1 bg-terracotta p-4 text-center">
+          <div className="text-[26px] font-black text-cream">{taskCount}</div>
+          <div className="text-[8px] font-extrabold uppercase tracking-[2px] text-cream">Tasks</div>
+        </div>
+        <div className="flex-1 bg-navy p-4 text-center">
+          <div className="text-[26px] font-black text-cream">{goalCount ?? 0}</div>
+          <div className="text-[8px] font-extrabold uppercase tracking-[2px] text-cream">Goals</div>
+        </div>
+        <div className="flex-1 bg-olive p-4 text-center">
+          <div className="text-[26px] font-black text-cream">{entryCount ?? 0}</div>
+          <div className="text-[8px] font-extrabold uppercase tracking-[2px] text-cream">Entries</div>
+        </div>
       </div>
 
       <DailyPromptCard />

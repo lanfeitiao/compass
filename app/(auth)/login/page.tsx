@@ -29,15 +29,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="w-full max-w-sm mx-4 rounded-xl bg-card p-6 text-card-foreground ring-1 ring-foreground/10">
+    <div className="w-full max-w-sm mx-4 bg-card p-6 text-card-foreground border-2 border-brown">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-semibold">Compass</h1>
-        <p className="text-sm text-muted-foreground mt-1">Your life purpose & goal tracker</p>
+        <h1 className="text-2xl font-extrabold uppercase tracking-[1px]">Compass</h1>
+        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mt-1">Your life purpose & goal tracker</p>
       </div>
       <button
         onClick={signInWithGoogle}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-3 border-2 border-brown bg-brown px-4 py-3 text-sm font-bold uppercase tracking-wide text-cream transition-colors hover:bg-brown/80 disabled:opacity-50"
       >
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />

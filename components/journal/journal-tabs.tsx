@@ -14,7 +14,7 @@ interface JournalTabsProps {
 export function JournalTabs({ entries, whatifEntries }: JournalTabsProps) {
   return (
     <Tabs defaultValue="all">
-      <TabsList className="w-full">
+      <TabsList className="w-full" variant="line">
         <TabsTrigger value="all">All entries</TabsTrigger>
         <TabsTrigger value="prompts">Prompts</TabsTrigger>
         <TabsTrigger value="whatif">What If</TabsTrigger>

@@ -49,7 +49,7 @@ export default async function GoalsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Goals &amp; Tasks</h1>
+        <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">Goals &amp; Tasks</h1>
         <GoalForm
           chapters={chapters}
           goals={flatGoals}
@@ -58,8 +58,8 @@ export default async function GoalsPage() {
       </div>
 
       {topLevel.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-muted-foreground">
+        <div className="border-2 border-brown p-8 text-center">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
             No goals yet. Create your first goal to get started.
           </p>
         </div>
