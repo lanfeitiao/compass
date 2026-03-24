@@ -13,11 +13,10 @@ export function DailyPromptCard() {
       onClick={() =>
         router.push(`/journal/new?prompt=${encodeURIComponent(prompt)}&type=prompt`)
       }
-      className="w-full rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 p-5 text-left text-white shadow-md transition-transform active:scale-[0.98]"
+      className="w-full bg-gold p-4 text-left transition-colors hover:bg-gold/90"
     >
-      <p className="text-sm font-medium opacity-90">Today&apos;s reflection</p>
-      <p className="mt-2 text-lg font-semibold leading-snug">{prompt}</p>
-      <p className="mt-3 text-sm opacity-75">Tap to write &rarr;</p>
+      <p className="text-[9px] font-extrabold uppercase tracking-[2px] text-brown">Today&apos;s Prompt</p>
+      <p className="mt-1.5 text-sm font-semibold leading-snug text-brown">{prompt}</p>
     </button>
   )
 }
