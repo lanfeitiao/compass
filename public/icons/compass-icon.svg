@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Cream background -->
+  <rect width="512" height="512" rx="108" fill="#C45D3E"/>
+
+  <!-- Outer compass ring - bold Isotype style -->
+  <circle cx="256" cy="256" r="188" fill="none" stroke="#FAF6F0" stroke-width="18" opacity="0.2"/>
+
+  <!-- Cardinal ticks - bold, geometric -->
+  <!-- North tick -->
+  <rect x="244" y="52" width="24" height="48" rx="4" fill="#FAF6F0" opacity="0.35"/>
+  <!-- South tick -->
+  <rect x="244" y="412" width="24" height="48" rx="4" fill="#FAF6F0" opacity="0.35"/>
+  <!-- West tick -->
+  <rect x="52" y="244" width="48" height="24" rx="4" fill="#FAF6F0" opacity="0.35"/>
+  <!-- East tick -->
+  <rect x="412" y="244" width="48" height="24" rx="4" fill="#FAF6F0" opacity="0.35"/>
+
+  <!-- North pointer - solid indigo, bold isotype triangle -->
+  <polygon points="256,88 300,240 212,240" fill="#FAF6F0"/>
+
+  <!-- South pointer - muted for contrast -->
+  <polygon points="256,424 212,272 300,272" fill="#FAF6F0" opacity="0.3"/>
+
+  <!-- East pointer - small -->
+  <polygon points="424,256 272,212 272,300" fill="#FAF6F0" opacity="0.3"/>
+
+  <!-- West pointer - small -->
+  <polygon points="88,256 240,300 240,212" fill="#FAF6F0" opacity="0.3"/>
+
+  <!-- Center pivot - bold circle -->
+  <circle cx="256" cy="256" r="20" fill="#FAF6F0"/>
+  <circle cx="256" cy="256" r="10" fill="#C45D3E"/>
+</svg>
