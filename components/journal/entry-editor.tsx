@@ -118,7 +118,7 @@ export function EntryEditor({
 
       {goals.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Link to goals</p>
+          <p className="text-sm font-bold text-muted-foreground">Link to goals</p>
           <div className="flex flex-wrap gap-2">
             {goals.map((goal) => (
               <button

@@ -5,10 +5,10 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { href: '/', label: 'Home', color: 'text-terracotta', strokeColor: 'stroke-terracotta' },
-  { href: '/journal', label: 'Journal', color: 'text-olive', strokeColor: 'stroke-olive' },
-  { href: '/goals', label: 'Goals', color: 'text-navy', strokeColor: 'stroke-navy' },
-  { href: '/chapters', label: 'Chapters', color: 'text-gold', strokeColor: 'stroke-gold' },
+  { href: '/', label: 'Home', color: 'text-terracotta' },
+  { href: '/journal', label: 'Journal', color: 'text-olive' },
+  { href: '/goals', label: 'Goals', color: 'text-navy' },
+  { href: '/chapters', label: 'Chapters', color: 'text-gold' },
 ] as const
 
 function HomeIcon({ className }: { className?: string }) {

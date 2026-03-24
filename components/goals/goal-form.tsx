@@ -74,7 +74,7 @@ export function GoalForm({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="goal-title" className="text-sm font-medium">
+            <label htmlFor="goal-title" className="text-sm font-bold">
               Title
             </label>
             <Input
@@ -87,7 +87,7 @@ export function GoalForm({
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="goal-description" className="text-sm font-medium">
+            <label htmlFor="goal-description" className="text-sm font-bold">
               Description
             </label>
             <Textarea
@@ -99,7 +99,7 @@ export function GoalForm({
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="goal-chapter" className="text-sm font-medium">
+            <label htmlFor="goal-chapter" className="text-sm font-bold">
               Chapter
             </label>
             <select
@@ -119,7 +119,7 @@ export function GoalForm({
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="goal-parent" className="text-sm font-medium">
+            <label htmlFor="goal-parent" className="text-sm font-bold">
               Parent Goal
             </label>
             <select

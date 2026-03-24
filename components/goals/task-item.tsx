@@ -51,8 +51,8 @@ export function TaskItem({
               strokeWidth={3}
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
                 d="M5 13l4 4L19 7"
               />
             </svg>
