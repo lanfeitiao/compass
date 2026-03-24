@@ -106,7 +106,7 @@ export function GoalForm({
               id="goal-chapter"
               value={chapterId}
               onChange={(e) => setChapterId(e.target.value)}
-              className="flex h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="flex h-8 w-full border-2 border-border bg-transparent px-2.5 py-1 text-sm font-bold uppercase tracking-wide transition-colors outline-none focus-visible:border-brown"
             >
               <option value="">No chapter</option>
               {chapters.map((ch) => (
@@ -126,7 +126,7 @@ export function GoalForm({
               id="goal-parent"
               value={parentGoalId}
               onChange={(e) => setParentGoalId(e.target.value)}
-              className="flex h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="flex h-8 w-full border-2 border-border bg-transparent px-2.5 py-1 text-sm font-bold uppercase tracking-wide transition-colors outline-none focus-visible:border-brown"
             >
               <option value="">None (top-level)</option>
               {goals.map((g) => (

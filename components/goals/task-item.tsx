@@ -35,16 +35,16 @@ export function TaskItem({
         <button
           onClick={toggleStatus}
           className={cn(
-            'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+            'flex h-[15px] w-[15px] shrink-0 items-center justify-center border-[2.5px] transition-colors',
             task.status === 'done'
-              ? 'border-green-500 bg-green-500'
-              : 'border-muted-foreground/40'
+              ? 'border-olive bg-olive'
+              : 'border-brown'
           )}
           aria-label={`Mark "${task.title}" as ${task.status === 'done' ? 'todo' : 'done'}`}
         >
           {task.status === 'done' && (
             <svg
-              className="h-3 w-3 text-white"
+              className="h-3 w-3 text-cream"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -60,7 +60,7 @@ export function TaskItem({
         </button>
         <span
           className={cn(
-            'text-sm truncate',
+            'text-[13px] font-semibold uppercase tracking-[0.5px] truncate',
             task.status === 'done' && 'text-muted-foreground line-through'
           )}
         >
