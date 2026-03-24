@@ -60,7 +60,7 @@ export function GoalCard({
             <button
               onClick={() => setExpanded(!expanded)}
               className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={expanded ? 'Collapse' : 'Expand'}
+              aria-label={expanded ? `Collapse ${goal.title}` : `Expand ${goal.title}`}
             >
               {expanded ? (
                 <ChevronDown className="h-4 w-4" />
