@@ -21,7 +21,10 @@ export const metadata: Metadata = {
     title: "Compass",
   },
   icons: {
-    apple: "/icons/icon-192.png",
+    icon: "/icons/icon-192.png",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
