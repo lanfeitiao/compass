@@ -37,7 +37,7 @@ export default async function EditJournalEntryPage({
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold tracking-tight">Edit Entry</h1>
+      <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">Edit Entry</h1>
       <EntryEditor
         goals={(goals as Goal[] | null) ?? []}
         entryId={typedEntry.id}

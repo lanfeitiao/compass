@@ -21,7 +21,7 @@ export default async function NewJournalEntryPage({
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold tracking-tight">New Entry</h1>
+      <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">New Entry</h1>
       <EntryEditor
         goals={(goals as Goal[] | null) ?? []}
         entryType={entryType}

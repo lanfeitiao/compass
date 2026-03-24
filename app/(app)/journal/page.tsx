@@ -87,7 +87,7 @@ export default async function JournalPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Journal</h1>
+        <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">Journal</h1>
         <Button render={<Link href="/journal/new" />} size="sm">
           + New
         </Button>
