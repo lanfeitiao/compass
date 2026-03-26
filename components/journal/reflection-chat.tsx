@@ -147,19 +147,14 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-col bg-[#f5f0e8]">
+    <div className="flex h-[calc(100dvh-80px)] flex-col bg-[#f5f0e8] md:h-[calc(100dvh)]">
       {/* Header */}
-      <div className="flex items-center justify-between border-b-[3px] border-brown px-5 py-4">
-        <div className="flex items-center gap-3">
-          <span className="text-[13px] font-extrabold uppercase tracking-[1px] text-brown">
-            ✦ Reflect
-          </span>
-          <span className="text-[11px] uppercase text-muted-foreground">
-            {entryTitle}
-          </span>
-        </div>
-        <span className="border-2 border-brown bg-[#f5f0e8] px-2.5 py-0.5 text-[11px] uppercase text-muted-foreground">
-          {round} of 3
+      <div className="flex items-center border-b-[3px] border-brown px-5 py-4">
+        <span className="text-[13px] font-extrabold uppercase tracking-[1px] text-brown">
+          ✦ Reflect
+        </span>
+        <span className="ml-3 text-[11px] uppercase text-muted-foreground">
+          {entryTitle}
         </span>
       </div>
 

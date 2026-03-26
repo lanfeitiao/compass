@@ -54,7 +54,7 @@ describe('ReflectionChat', () => {
     expect(screen.getByText(/thinking/i)).toBeInTheDocument()
   })
 
-  it('displays round counter', async () => {
+  it('displays the reflect header', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ question: 'First question?' }),
@@ -62,9 +62,7 @@ describe('ReflectionChat', () => {
 
     render(<ReflectionChat {...defaultProps} />)
 
-    await waitFor(() => {
-      expect(screen.getByText('1 of 3')).toBeInTheDocument()
-    })
+    expect(screen.getByText('✦ Reflect')).toBeInTheDocument()
   })
 
   it('sends answer and receives next question', async () => {
@@ -95,7 +93,7 @@ describe('ReflectionChat', () => {
     await waitFor(() => {
       expect(screen.getByText('Second question?')).toBeInTheDocument()
       expect(screen.getByText('My answer here')).toBeInTheDocument()
-      expect(screen.getByText('2 of 3')).toBeInTheDocument()
+      expect(screen.getByText('My answer here')).toBeInTheDocument()
     })
   })
 
