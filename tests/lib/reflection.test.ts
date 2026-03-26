@@ -16,12 +16,17 @@ describe('buildReflectionNodes', () => {
         content: [{ type: 'text', text: 'Reflection' }],
       },
       {
-        type: 'paragraph',
+        type: 'blockquote',
         content: [
           {
-            type: 'text',
-            marks: [{ type: 'italic' }],
-            text: 'What did you feel?',
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                marks: [{ type: 'italic' }],
+                text: 'What did you feel?',
+              },
+            ],
           },
         ],
       },
@@ -43,11 +48,13 @@ describe('buildReflectionNodes', () => {
     expect(nodes).toHaveLength(6)
     expect(nodes[0]).toEqual({ type: 'horizontalRule' })
     expect(nodes[1].type).toBe('heading')
-    // Round 1
-    expect(nodes[2].content[0].text).toBe('Q1?')
+    // Round 1 — question is blockquote > paragraph > text
+    expect(nodes[2].type).toBe('blockquote')
+    expect(nodes[2].content[0].content[0].text).toBe('Q1?')
     expect(nodes[3].content[0].text).toBe('A1.')
     // Round 2
-    expect(nodes[4].content[0].text).toBe('Q2?')
+    expect(nodes[4].type).toBe('blockquote')
+    expect(nodes[4].content[0].content[0].text).toBe('Q2?')
     expect(nodes[5].content[0].text).toBe('A2.')
   })
 

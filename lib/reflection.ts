@@ -35,12 +35,17 @@ export function buildReflectionNodes(conversation: ReflectionRound[]): TiptapNod
 
   for (const round of conversation) {
     nodes.push({
-      type: 'paragraph',
+      type: 'blockquote',
       content: [
         {
-          type: 'text',
-          marks: [{ type: 'italic' }],
-          text: round.question,
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              marks: [{ type: 'italic' }],
+              text: round.question,
+            },
+          ],
         },
       ],
     })
