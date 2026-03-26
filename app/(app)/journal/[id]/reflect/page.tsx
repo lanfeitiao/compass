@@ -11,10 +11,14 @@ export default async function ReflectPage({
   const { id } = await params
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) notFound()
+
   const { data: entry } = await supabase
     .from('journal_entries')
     .select('*')
     .eq('id', id)
+    .eq('user_id', user.id)
     .single()
 
   if (!entry) notFound()

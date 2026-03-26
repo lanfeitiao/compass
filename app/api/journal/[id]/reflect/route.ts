@@ -28,9 +28,25 @@ export async function POST(
     return NextResponse.json({ error: 'Entry not found' }, { status: 404 })
   }
 
-  // Parse request body
-  const { conversation } = await request.json() as {
-    conversation: { role: 'assistant' | 'user'; content: string }[]
+  // Parse and validate request body
+  let conversation: { role: 'assistant' | 'user'; content: string }[]
+  try {
+    const body = await request.json()
+    if (!Array.isArray(body.conversation)) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    }
+    // Validate each message and enforce round limit (max 6 messages = 3 rounds)
+    conversation = body.conversation.filter(
+      (msg: unknown): msg is { role: 'assistant' | 'user'; content: string } =>
+        typeof msg === 'object' && msg !== null &&
+        ('role' in msg) && (msg.role === 'assistant' || msg.role === 'user') &&
+        ('content' in msg) && typeof msg.content === 'string'
+    )
+    if (conversation.length > 6) {
+      return NextResponse.json({ error: 'Maximum reflection rounds exceeded' }, { status: 400 })
+    }
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
   // Extract plain text from Tiptap JSON for the AI context
@@ -86,7 +102,9 @@ export async function POST(
 function extractText(node: Record<string, unknown>): string {
   if (node.type === 'text') return (node.text as string) || ''
   if (!Array.isArray(node.content)) return ''
+  const separator = node.type === 'doc' || node.type === 'paragraph' || node.type === 'heading'
+    ? '\n' : ''
   return (node.content as Record<string, unknown>[])
     .map(extractText)
-    .join(node.type === 'paragraph' ? '\n' : '')
+    .join(separator)
 }
