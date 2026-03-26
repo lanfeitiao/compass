@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { EntryEditor } from '@/components/journal/entry-editor'
@@ -37,7 +38,15 @@ export default async function EditJournalEntryPage({
 
   return (
     <div className="space-y-4">
-      <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">Edit Entry</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-[22px] font-extrabold uppercase tracking-[1px]">Edit Entry</h1>
+        <Link
+          href={`/journal/${typedEntry.id}/reflect`}
+          className="border-[3px] border-brown bg-terracotta px-5 py-2 text-[13px] font-extrabold uppercase tracking-[1px] text-white"
+        >
+          ✦ Reflect
+        </Link>
+      </div>
       <EntryEditor
         goals={(goals as Goal[] | null) ?? []}
         entryId={typedEntry.id}
