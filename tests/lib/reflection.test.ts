@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildReflectionNodes } from '@/lib/reflection'
+import { buildReflectionNodes, REFLECTION_SYSTEM_PROMPT } from '@/lib/reflection'
 
 describe('buildReflectionNodes', () => {
   it('returns horizontalRule + heading + Q&A paragraphs for one round', () => {
@@ -53,5 +53,17 @@ describe('buildReflectionNodes', () => {
 
   it('returns empty array for empty conversation', () => {
     expect(buildReflectionNodes([])).toEqual([])
+  })
+})
+
+describe('REFLECTION_SYSTEM_PROMPT', () => {
+  it('is a non-empty string', () => {
+    expect(typeof REFLECTION_SYSTEM_PROMPT).toBe('string')
+    expect(REFLECTION_SYSTEM_PROMPT.length).toBeGreaterThan(0)
+  })
+
+  it('instructs to ask questions, not give advice', () => {
+    expect(REFLECTION_SYSTEM_PROMPT.toLowerCase()).toContain('question')
+    expect(REFLECTION_SYSTEM_PROMPT.toLowerCase()).toContain('never')
   })
 })
