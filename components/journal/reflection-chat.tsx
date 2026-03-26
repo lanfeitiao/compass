@@ -20,7 +20,7 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     fetchNextQuestion([])
@@ -197,16 +197,20 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
       {/* Input area */}
       <div className="border-t-[3px] border-brown px-5 py-4">
         {!error && (
-          <div className="flex gap-2">
-            <input
+          <div className="flex gap-2 items-end">
+            <textarea
               ref={inputRef}
-              type="text"
               value={currentAnswer}
-              onChange={(e) => setCurrentAnswer(e.target.value)}
+              onChange={(e) => {
+                setCurrentAnswer(e.target.value)
+                e.target.style.height = 'auto'
+                e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`
+              }}
               onKeyDown={handleKeyDown}
               placeholder="Type your reflection..."
               disabled={loading || saving}
-              className="flex-1 border-2 border-brown bg-white px-3 py-2.5 text-[13px] outline-none disabled:opacity-50"
+              rows={1}
+              className="flex-1 resize-none border-2 border-brown bg-white px-3 py-2.5 text-[13px] leading-relaxed outline-none disabled:opacity-50"
             />
             <button
               onClick={handleSend}
