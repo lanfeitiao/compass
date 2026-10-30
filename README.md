@@ -80,6 +80,10 @@ Set `OPENAI_API_KEY` on the server to enable voice transcription (also used by A
 Voice input requires HTTPS, or localhost, and permission to use the microphone. It records
 WebM in supported browsers and MP4 in Safari, then sends the recording through an authenticated
 server endpoint to OpenAI's `gpt-transcribe` model. The API key stays on the server.
+If that model is unavailable to the API project, the server retries once with
+`gpt-4o-mini-transcribe`. Set `OPENAI_TRANSCRIPTION_MODEL` to override the primary model.
+Key, quota, and invalid-audio failures are not blindly retried. Provider failures log only
+status, error code, and request ID, without recording content or credentials.
 
 Click **Voice input**, speak, then click **Stop**. The recognized text is appended to your
 draft and remains editable; it is only saved or sent when you choose. Each recording is
@@ -87,6 +91,8 @@ limited to two minutes and 4 MB. Failed transcriptions can be retried or discard
 or leaving the page releases the microphone and ignores late results. Audio is not stored
 in Compass; only text you explicitly save is persisted. Microphone and transcription errors
 leave typing available.
+After a failed transcription, the recording remains available for retry while the text draft
+can be edited and saved. Saving the draft does not include the failed recording.
 
 ## Project Structure
 

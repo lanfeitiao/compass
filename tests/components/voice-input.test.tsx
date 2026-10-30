@@ -1,6 +1,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VoiceInput } from '@/components/journal/voice-input'
+import { useState } from 'react'
 
 const stopTrack = vi.fn()
 const getUserMedia = vi.fn()
@@ -123,6 +124,49 @@ describe('VoiceInput', () => {
     await waitFor(() => expect(onTranscript).toHaveBeenCalledOnce())
     expect(getUserMedia).toHaveBeenCalledOnce()
     expect(mockFetch.mock.calls[1][1].body.get('audio')).toBe(mockFetch.mock.calls[0][1].body.get('audio'))
+  })
+
+  it('unblocks the text draft after failure while retaining the recording for retry', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 503,
+      json: async () => ({ error: 'Voice input is unavailable right now.' }) })
+    const onBusyChange = vi.fn()
+    render(<VoiceInput onTranscript={vi.fn()} onBusyChange={onBusyChange} />)
+    await begin()
+    fireEvent.click(screen.getByRole('button', { name: 'Stop recording' }))
+    await screen.findByRole('button', { name: 'Retry transcription' })
+    expect(onBusyChange).toHaveBeenLastCalledWith(false)
+    expect(screen.getByRole('alert')).toHaveTextContent('has not been added')
+    expect(stopTrack).toHaveBeenCalled()
+  })
+
+  it('allows a typed draft to be saved after failure and blocks saving again during retry', async () => {
+    const save = vi.fn()
+    function Draft() {
+      const [busy, setBusy] = useState(false)
+      const [text, setText] = useState('My existing draft')
+      return <>
+        <textarea aria-label="Draft" value={text} onChange={(e) => setText(e.target.value)} />
+        <VoiceInput onBusyChange={setBusy} onTranscript={(value) => setText((old) => `${old}\n${value}`)} />
+        <button disabled={busy} onClick={() => save(text)}>Save draft</button>
+      </>
+    }
+    mockFetch.mockRejectedValueOnce(new TypeError('Network failure'))
+    render(<Draft />)
+    await begin()
+    expect(screen.getByRole('button', { name: 'Save draft' })).toBeDisabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Stop recording' }))
+    await screen.findByRole('button', { name: 'Retry transcription' })
+    const input = screen.getByLabelText('Draft')
+    expect(input).toHaveValue('My existing draft')
+    fireEvent.change(input, { target: { value: 'My existing draft, edited' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save draft' }))
+    expect(save).toHaveBeenCalledWith('My existing draft, edited')
+    mockFetch.mockReturnValueOnce(new Promise(() => {}))
+    fireEvent.click(screen.getByRole('button', { name: 'Retry transcription' }))
+    expect(screen.getByRole('button', { name: 'Save draft' })).toBeDisabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.getByRole('button', { name: 'Save draft' })).toBeEnabled()
+    expect(input).toHaveValue('My existing draft, edited')
   })
 
   it('handles denied permission and unsupported browsers while keeping typing available', async () => {

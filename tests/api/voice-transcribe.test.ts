@@ -44,7 +44,7 @@ describe('voice transcription endpoint', () => {
       const [params, options] = transcribe.mock.calls[0]
       expect(params.model).toBe('gpt-transcribe')
       expect(params.file.name).toBe(type.startsWith('audio/webm') ? 'recording.webm' : 'recording.mp4')
-      expect(options).toMatchObject({ timeout: 45_000, maxRetries: 0 })
+      expect(options).toMatchObject({ timeout: 20_000, maxRetries: 0 })
       expect(params).not.toHaveProperty('language')
     },
   )
@@ -86,5 +86,30 @@ describe('voice transcription endpoint', () => {
     const response = await POST(upload())
     expect(response.status).toBe(502)
     expect(await response.text()).not.toContain('private provider details')
+  })
+
+  it('falls back when the primary transcription model is unavailable', async () => {
+    transcribe.mockRejectedValueOnce(Object.assign(new Error('model unavailable'), {
+      status: 404, code: 'model_not_found',
+    }))
+    const response = await POST(upload('audio/mp4'))
+    expect(response.status).toBe(200)
+    expect(transcribe).toHaveBeenCalledTimes(2)
+    expect(transcribe.mock.calls[1][0].model).toBe('gpt-4o-mini-transcribe')
+    expect(transcribe.mock.calls[1][0].file).toBe(transcribe.mock.calls[0][0].file)
+  })
+
+  it.each([
+    [401, 'invalid_api_key', 503, /unavailable/i],
+    [429, 'insufficient_quota', 503, /unavailable/i],
+    [400, 'invalid_audio', 422, /recording could not be read/i],
+  ])('classifies provider error %s without blind retry or exposing details', async (status, code, expected, message) => {
+    transcribe.mockRejectedValueOnce(Object.assign(new Error('secret provider detail'), { status, code }))
+    const response = await POST(upload())
+    expect(response.status).toBe(expected)
+    const body = await response.json()
+    expect(body.error).toMatch(message)
+    expect(body.error).not.toContain('secret provider detail')
+    expect(transcribe).toHaveBeenCalledOnce()
   })
 })

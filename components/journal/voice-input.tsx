@@ -32,7 +32,7 @@ export function VoiceInput({ onTranscript, onBusyChange, disabled = false }: Voi
   const changeStatus = useCallback((next: Status) => {
     statusRef.current = next
     setStatus(next)
-    callbacks.current.onBusyChange(next !== 'idle')
+    callbacks.current.onBusyChange(next !== 'idle' && next !== 'failed')
   }, [])
 
   const releaseMicrophone = useCallback(() => {
@@ -230,7 +230,9 @@ export function VoiceInput({ onTranscript, onBusyChange, disabled = false }: Voi
                 : status === 'idle' ? 'Speak, then review the text.' : ''}
         </span>
       </div>
-      {error && <p role="alert" className="text-[12px] text-terracotta">{error}</p>}
+      {error && <p role="alert" className="text-[12px] text-terracotta">
+        {error} {status === 'failed' && 'The recording has not been added to your text. You can retry it or keep editing and save your text.'}
+      </p>}
     </div>
   )
 }
