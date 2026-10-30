@@ -229,6 +229,7 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
               </button>
             </div>
             <VoiceInput
+              key={`${entryId}:${conversation.length}`}
               disabled={loading || saving}
               onBusyChange={setVoiceBusy}
               onTranscript={(text) => {

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ReflectionChat } from '@/components/journal/reflection-chat'
+import { useState } from 'react'
 
 // Mock next/navigation
 const mockPush = vi.fn()
@@ -13,12 +14,17 @@ vi.mock('next/navigation', () => ({
 vi.mock('@/components/journal/voice-input', () => ({
   VoiceInput: ({ onTranscript, onBusyChange }: {
     onTranscript: (text: string) => void; onBusyChange: (busy: boolean) => void
-  }) => (
+  }) => {
+    const [failed, setFailed] = useState(false)
+    return (
     <>
       <button onClick={() => onBusyChange(true)}>Begin dictation</button>
       <button onClick={() => { onTranscript('我还想补充一点。'); onBusyChange(false) }}>Insert transcript</button>
+      <button onClick={() => { setFailed(true); onBusyChange(false) }}>Fail dictation</button>
+      {failed && <button onClick={() => onTranscript('Previous round audio')}>Retry previous recording</button>}
     </>
-  ),
+    )
+  },
 }))
 
 // Mock fetch
@@ -178,6 +184,20 @@ describe('ReflectionChat', () => {
     render(<ReflectionChat {...defaultProps} />)
 
     expect(screen.getByText('Test Entry')).toBeInTheDocument()
+  })
+
+  it('discards failed recordings when a typed answer advances the reflection round', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ question: 'First question?' }) })
+    render(<ReflectionChat {...defaultProps} />)
+    await screen.findByText('First question?')
+    fireEvent.click(screen.getByRole('button', { name: 'Fail dictation' }))
+    expect(screen.getByRole('button', { name: 'Retry previous recording' })).toBeInTheDocument()
+    fireEvent.change(screen.getByPlaceholderText('Type your reflection...'), { target: { value: 'Typed first answer' } })
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ question: 'Second question?' }) })
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }))
+    await screen.findByText('Second question?')
+    expect(screen.queryByRole('button', { name: 'Retry previous recording' })).not.toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Type your reflection...')).toHaveValue('')
   })
 
   it('keeps typed text, appends dictated text, and sends only after explicit confirmation', async () => {
