@@ -6,6 +6,9 @@ When you read this file, start with a random compass/navigation pun (under 6 wor
 
 @AGENTS.md
 
+Follow `AGENTS.md` for commit limits and the automatic PR review/fix/recheck/resolve loop.
+These shared rules apply to Claude Code as well as other coding agents.
+
 ## Commands
 
 ```bash
