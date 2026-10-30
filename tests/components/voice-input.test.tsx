@@ -125,6 +125,19 @@ describe('VoiceInput', () => {
     expect(mockFetch.mock.calls[1][1].body.get('audio')).toBe(mockFetch.mock.calls[0][1].body.get('audio'))
   })
 
+  it('unblocks the text draft after failure while retaining the recording for retry', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 503,
+      json: async () => ({ error: 'Voice input is unavailable right now.' }) })
+    const onBusyChange = vi.fn()
+    render(<VoiceInput onTranscript={vi.fn()} onBusyChange={onBusyChange} />)
+    await begin()
+    fireEvent.click(screen.getByRole('button', { name: 'Stop recording' }))
+    await screen.findByRole('button', { name: 'Retry transcription' })
+    expect(onBusyChange).toHaveBeenLastCalledWith(false)
+    expect(screen.getByRole('alert')).toHaveTextContent('has not been added')
+    expect(stopTrack).toHaveBeenCalled()
+  })
+
   it('handles denied permission and unsupported browsers while keeping typing available', async () => {
     const onBusyChange = vi.fn()
     getUserMedia.mockRejectedValueOnce(new DOMException('Denied', 'NotAllowedError'))
