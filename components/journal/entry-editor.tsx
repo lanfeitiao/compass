@@ -7,6 +7,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { VoiceInput } from '@/components/journal/voice-input'
 import type { Goal } from '@/lib/supabase/types'
 
 interface EntryEditorProps {
@@ -32,8 +33,10 @@ export function EntryEditor({
   const [title, setTitle] = useState(initialTitle)
   const [selectedGoalIds, setSelectedGoalIds] = useState<string[]>(initialGoalIds)
   const [saving, setSaving] = useState(false)
+  const [voiceBusy, setVoiceBusy] = useState(false)
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Placeholder.configure({
@@ -56,7 +59,7 @@ export function EntryEditor({
   }
 
   async function handleSave() {
-    if (!editor) return
+    if (!editor || saving || voiceBusy) return
     setSaving(true)
 
     const payload = {
@@ -114,6 +117,19 @@ export function EntryEditor({
         className="text-lg font-semibold"
       />
 
+      <VoiceInput
+        disabled={saving || !editor}
+        onBusyChange={setVoiceBusy}
+        onTranscript={(text) => {
+          // Structured text nodes keep spoken HTML literal and preserve existing text.
+          editor?.chain().focus('end').insertContent(
+            text.split(/\r?\n/).map((line) => ({
+              type: 'paragraph',
+              content: line ? [{ type: 'text', text: line }] : [],
+            })),
+          ).run()
+        }}
+      />
       <EditorContent editor={editor} />
 
       {goals.length > 0 && (
@@ -138,7 +154,7 @@ export function EntryEditor({
         </div>
       )}
 
-      <Button onClick={handleSave} disabled={saving} className="w-full">
+      <Button onClick={handleSave} disabled={saving || voiceBusy || !editor} className="w-full">
         {saving ? 'Saving...' : entryId ? 'Update Entry' : 'Save Entry'}
       </Button>
     </div>

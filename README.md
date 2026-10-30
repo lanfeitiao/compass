@@ -20,6 +20,7 @@ The visual design is inspired by [Otto Neurath's Isotype](https://en.wikipedia.o
 - **Life Chapters** — organize your life into distinct phases with a vertical timeline
 - **Goals & Tasks** — hierarchical goals with progress pictograms and nested sub-goals
 - **Journal** — rich text entries with three modes: free-form, guided prompts, and what-if scenarios
+- **Voice Input** — dictate journal entries and reflection answers, review the transcript, then save or send
 - **Daily Prompts** — curated reflection questions surfaced on your home dashboard
 - **Goal Linking** — connect journal entries to specific goals for context
 - **PWA** — installable on mobile with offline-capable home screen icon
@@ -72,6 +73,20 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
+
+### Voice input
+
+Set `OPENAI_API_KEY` on the server to enable voice transcription (also used by AI reflections).
+Voice input requires HTTPS, or localhost, and permission to use the microphone. It records
+WebM in supported browsers and MP4 in Safari, then sends the recording through an authenticated
+server endpoint to OpenAI's `gpt-transcribe` model. The API key stays on the server.
+
+Click **Voice input**, speak, then click **Stop**. The recognized text is appended to your
+draft and remains editable; it is only saved or sent when you choose. Each recording is
+limited to two minutes and 4 MB. Failed transcriptions can be retried or discarded. Canceling
+or leaving the page releases the microphone and ignores late results. Audio is not stored
+in Compass; only text you explicitly save is persisted. Microphone and transcription errors
+leave typing available.
 
 ## Project Structure
 
