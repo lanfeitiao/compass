@@ -24,7 +24,7 @@ function phoneUpload() {
 describe('voice route through the real OpenAI SDK (HTTP transport mocked)', () => {
   it('uploads multipart MP4 bytes and handles a real SDK model-not-found error', async () => {
     const requests: FormData[] = []
-    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const transport = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const request = new Request(input, init)
       expect(request.url).toBe('https://api.openai.com/v1/audio/transcriptions')
       requests.push(await request.formData())
@@ -32,7 +32,9 @@ describe('voice route through the real OpenAI SDK (HTTP transport mocked)', () =
         error: { message: 'model not available', type: 'invalid_request_error', code: 'model_not_found' },
       }, { status: 404 })
       return Response.json({ text: '今天我想做一点改变。' })
-    }))
+    })
+    // Let the SDK check multipart support without probing fetch('data:,').
+    vi.stubGlobal('fetch', Object.assign(transport, { Response }))
     const response = await POST(phoneUpload())
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ text: '今天我想做一点改变。' })
@@ -50,7 +52,7 @@ describe('voice route through the real OpenAI SDK (HTTP transport mocked)', () =
     const fetch = vi.fn(async () => Response.json({
       error: { message: 'private account details', type: 'insufficient_quota', code: 'insufficient_quota' },
     }, { status: 429 }))
-    vi.stubGlobal('fetch', fetch)
+    vi.stubGlobal('fetch', Object.assign(fetch, { Response }))
     const response = await POST(phoneUpload())
     expect(response.status).toBe(503)
     expect(await response.text()).not.toContain('private account details')
