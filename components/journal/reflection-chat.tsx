@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { buildReflectionNodes, type ReflectionRound } from '@/lib/reflection'
+import { VoiceInput } from '@/components/journal/voice-input'
 
 interface ReflectionChatProps {
   entryId: string
@@ -18,6 +19,7 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
   const [round, setRound] = useState(1)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [voiceBusy, setVoiceBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -31,6 +33,14 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [conversation, currentQuestion])
+
+  useEffect(() => {
+    const input = inputRef.current
+    if (input) {
+      input.style.height = 'auto'
+      input.style.height = `${Math.min(input.scrollHeight, 120)}px`
+    }
+  }, [currentAnswer])
 
   async function fetchNextQuestion(
     conv: { role: 'assistant' | 'user'; content: string }[]
@@ -59,7 +69,7 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
   }
 
   async function handleSend() {
-    if (!currentAnswer.trim() || loading) return
+    if (!currentAnswer.trim() || loading || saving || voiceBusy) return
 
     const newRound: ReflectionRound = {
       question: currentQuestion,
@@ -88,6 +98,7 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
   }
 
   async function handleDone() {
+    if (saving || voiceBusy) return
     if (conversation.length === 0 && !currentAnswer.trim()) {
       router.push(`/journal/${entryId}`)
       return
@@ -197,41 +208,48 @@ export function ReflectionChat({ entryId, entryContent, entryTitle }: Reflection
       {/* Input area */}
       <div className="border-t-[3px] border-brown px-5 py-4">
         {!error && (
-          <div className="flex gap-2 items-end">
-            <textarea
-              ref={inputRef}
-              value={currentAnswer}
-              onChange={(e) => {
-                setCurrentAnswer(e.target.value)
-                e.target.style.height = 'auto'
-                e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Type your reflection..."
+          <div className="space-y-2">
+            <div className="flex gap-2 items-end">
+              <textarea
+                ref={inputRef}
+                value={currentAnswer}
+                onChange={(e) => setCurrentAnswer(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your reflection..."
+                disabled={loading || saving}
+                rows={1}
+                className="min-w-0 flex-1 resize-none border-2 border-brown bg-white px-3 py-2.5 text-[13px] leading-relaxed outline-none disabled:opacity-50"
+              />
+              <button
+                onClick={handleSend}
+                disabled={loading || saving || voiceBusy || !currentAnswer.trim()}
+                className="border-2 border-brown bg-navy px-3.5 py-2 text-[12px] font-bold uppercase text-white disabled:opacity-50"
+              >
+                Send
+              </button>
+            </div>
+            <VoiceInput
               disabled={loading || saving}
-              rows={1}
-              className="flex-1 resize-none border-2 border-brown bg-white px-3 py-2.5 text-[13px] leading-relaxed outline-none disabled:opacity-50"
+              onBusyChange={setVoiceBusy}
+              onTranscript={(text) => {
+                setCurrentAnswer((previous) => previous ? `${previous}\n${text}` : text)
+                inputRef.current?.focus()
+              }}
             />
-            <button
-              onClick={handleSend}
-              disabled={loading || saving || !currentAnswer.trim()}
-              className="border-2 border-brown bg-navy px-3.5 py-2 text-[12px] font-bold uppercase text-white disabled:opacity-50"
-            >
-              Send
-            </button>
           </div>
         )}
         <div className="mt-2 flex justify-between">
           <button
             onClick={() => router.push(`/journal/${entryId}`)}
-            className="text-[11px] uppercase tracking-[1px] text-muted-foreground"
+            disabled={voiceBusy || saving}
+            className="text-[11px] uppercase tracking-[1px] text-muted-foreground disabled:opacity-50"
           >
             ← Back to entry
           </button>
           <button
             onClick={handleDone}
-            disabled={saving}
-            className="text-[11px] uppercase tracking-[1px] text-muted-foreground"
+            disabled={saving || voiceBusy}
+            className="text-[11px] uppercase tracking-[1px] text-muted-foreground disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Done — save reflections'}
           </button>

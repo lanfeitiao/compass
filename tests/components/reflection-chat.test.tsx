@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ReflectionChat } from '@/components/journal/reflection-chat'
 
@@ -8,6 +8,17 @@ const mockPush = vi.fn()
 const mockRefresh = vi.fn()
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush, refresh: mockRefresh }),
+}))
+
+vi.mock('@/components/journal/voice-input', () => ({
+  VoiceInput: ({ onTranscript, onBusyChange }: {
+    onTranscript: (text: string) => void; onBusyChange: (busy: boolean) => void
+  }) => (
+    <>
+      <button onClick={() => onBusyChange(true)}>Begin dictation</button>
+      <button onClick={() => { onTranscript('我还想补充一点。'); onBusyChange(false) }}>Insert transcript</button>
+    </>
+  ),
 }))
 
 // Mock fetch
@@ -167,5 +178,30 @@ describe('ReflectionChat', () => {
     render(<ReflectionChat {...defaultProps} />)
 
     expect(screen.getByText('Test Entry')).toBeInTheDocument()
+  })
+
+  it('keeps typed text, appends dictated text, and sends only after explicit confirmation', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ question: 'What happened?' }) })
+    render(<ReflectionChat {...defaultProps} />)
+    await screen.findByText('What happened?')
+    const input = screen.getByPlaceholderText('Type your reflection...')
+    fireEvent.change(input, { target: { value: 'Already typed.' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Begin dictation' }))
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /done/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /back to entry/i })).toBeDisabled()
+    fireEvent.keyDown(input, { key: 'Enter' })
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    // Edits made while transcription is pending are retained too.
+    fireEvent.change(input, { target: { value: 'Already typed. More detail.' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Insert transcript' }))
+    expect(input).toHaveValue('Already typed. More detail.\n我还想补充一点。')
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    fireEvent.change(input, { target: { value: 'My reviewed answer.' } })
+    mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ question: 'Next question?' }) })
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }))
+    await screen.findByText('Next question?')
+    const payload = JSON.parse(mockFetch.mock.calls[1][1].body)
+    expect(payload.conversation[1].content).toBe('My reviewed answer.')
   })
 })
