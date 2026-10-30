@@ -44,7 +44,7 @@ describe('voice transcription endpoint', () => {
       const [params, options] = transcribe.mock.calls[0]
       expect(params.model).toBe('gpt-transcribe')
       expect(params.file.name).toBe(type.startsWith('audio/webm') ? 'recording.webm' : 'recording.mp4')
-      expect(options).toMatchObject({ timeout: 45_000, maxRetries: 0 })
+      expect(options).toMatchObject({ timeout: 20_000, maxRetries: 0 })
       expect(params).not.toHaveProperty('language')
     },
   )
